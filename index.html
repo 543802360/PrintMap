@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta name="X-UA-Compatible" content="IE=edge">
+    <title>宗地图打印</title>
+    <meta name="description" content="宗地图打印demo，实现sde数据的读取及宗地图模板套合并打印宗地地图">
+    <meta name="keywords" content="宗地图、打印">
+    <!--在线地址--><!--<link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.0/"></script>--><!--本地离线地址-->
+    <link rel="stylesheet" href="http://127.0.0.1:8080/arcgis_js_api/library/3.17/esri/css/esri.css">
+    <script src="http://127.0.0.1:8080/arcgis_js_api/library/3.17/init.js"></script>
+    <link rel="stylesheet" href="js/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="js/lib/fontAwesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/lib/jquery/jquery-2.1.4.min.js"></script>
+    <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/app/PanelUtil.js"></script>
+    <!--
+        <script src="js/lib/require.js" data-main="js/app/main"></script>
+    -->
+    <script src="js/app/main.js"></script>
+</head>
+<body>
+<div class="container-fluid page-wrapper">
+    <!--导航条-->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <!--网站logo以及自适应移动设备按钮折叠按钮-->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" style="padding:0">
+                    <img alt="Brand" src="img/logo.ico">
+                </a>
+                <a class="navbar-brand" href="#">
+                    宗地图打印
+                </a>
+            </div>
+            <!--导航栏菜单-->
+            <div class="collapse navbar-collapse" id="main-menu">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" id="menu-search">
+                            <span class="fa fa-search"></span> 宗地检索
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-config">
+                            <span class="glyphicon glyphicon-cog"></span> 宗地整饰
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-export2pdf">
+                            <span class="fa fa-save"></span> 导出PDF
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-print">
+                            <span class="fa fa-print"></span> 打印
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--地图容器-->
+    <div id="map"></div>
+    <!--宗地图配置-->
+    <div class="container-fluid" id="config-panel">
+        <div class="input-group">
+            <span class="input-group-addon header" id="hs">名称</span>
+            <input type="text" class="form-control" id="pollution-hs" aria-describedby="hs">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon header" id="Ts">土地权利人</span>
+            <input type="text" class="form-control" id="pollution-ts" aria-describedby="Ts">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon header" id="Us">制图员</span>
+            <input type="text" class="form-control" id="pollution-us" aria-describedby="hs">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon header" id="ds">检查员</span>
+            <input type="text" class="form-control" id="pollution-ds" aria-describedby="ds">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon header" id="Q">日期</span>
+            <input type="text" class="form-control" id="pollution-Q" aria-describedby="Q">
+        </div>
+    </div>
+    <div class="container-fluid" id="search-panel">
+        <div class="input-group">
+            <span class="input-group-addon header" id="hs">宗地名称</span>
+            <input type="text" class="form-control" id="pollution-hs" aria-describedby="hs">
+        </div>
+    </div>
+</div>
+</body>
+</html>
