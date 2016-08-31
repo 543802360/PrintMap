@@ -5,21 +5,28 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
     <meta name="X-UA-Compatible" content="IE=edge">
     <title>宗地图打印</title>
-    <meta name="description" content="宗地图打印demo，实现sde数据的读取及宗地图模板套合并打印宗地地图">
-    <meta name="keywords" content="宗地图、打印">
-    <!--在线地址--><!--<link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.0/"></script>--><!--本地离线地址-->
-    <link rel="stylesheet" href="http://127.0.0.1:8080/arcgis_js_api/library/3.17/esri/css/esri.css">
-    <script src="http://127.0.0.1:8080/arcgis_js_api/library/3.17/init.js"></script>
+    <meta name="description" content="宗地图打印，实现宗地的在线多重条件检索及在线宗地样式配置，并可完成宗地图在线打印及png、pdf等格式导出">
+    <meta name="keywords" content="宗地图、在线打印、不动产">
+    <link rel="icon" href="img/logo.png">
     <link rel="stylesheet" href="js/lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="js/lib/fontAwesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="js/lib/bootstrap/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="js/lib/bootstrap/plugins/spinner/bootstrap-spinner.css">
     <link rel="stylesheet" href="css/style.css">
+
+
+    <!--在线地址--><!--<link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.0/"></script>-->
     <script src="js/lib/jquery/jquery-2.1.4.min.js"></script>
     <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/lib/bootstrap/plugins/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="js/lib/bootstrap/plugins/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="js/lib/bootstrap/plugins/jscolor.min.js"></script>
+    <script src="js/lib/bootstrap/plugins/spinner/jquery.spinner.min.js"></script>
+    <!--本地离线地址-->
+    <link rel="stylesheet" href="http://127.0.0.1:8080/arcgis_js_api/library/3.17/esri/css/esri.css">
+    <script src="http://127.0.0.1:8080/arcgis_js_api/library/3.17/init.js"></script>
     <script src="js/app/PanelUtil.js"></script>
-    <!--
-        <script src="js/lib/require.js" data-main="js/app/main"></script>
-    -->
     <script src="js/app/main.js"></script>
 </head>
 <body>
@@ -34,7 +41,7 @@
                     <span class="icon-bar"></span> <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#" style="padding:0">
-                    <img alt="Brand" src="img/logo.ico">
+                    <img alt="Brand" src="img/logo.png">
                 </a>
                 <a class="navbar-brand" href="#">
                     宗地图打印
@@ -54,8 +61,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="menu-export2pdf">
-                            <span class="fa fa-save"></span> 导出PDF
+                        <a href="#" id="menu-preview">
+                            <span class="fa fa-eye"></span> 打印预览
                         </a>
                     </li>
                     <li>
@@ -68,36 +75,197 @@
         </div>
     </nav>
     <!--地图容器-->
-    <div id="map"></div>
+    <div id="map">
+        <div id="HomeButton"></div>
+    </div>
     <!--宗地图配置-->
     <div class="container-fluid" id="config-panel">
-        <div class="input-group">
-            <span class="input-group-addon header" id="hs">名称</span>
-            <input type="text" class="form-control" id="pollution-hs" aria-describedby="hs">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default basic-config-panel">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            基本信息配置
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="input-group">
+                            <span class="input-group-addon header">宗地图标题</span>
+                            <input type="text" class="form-control" id="parcel-map-title">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header" id="Ts">土地权利人</span>
+                            <input type="text" class="form-control" id="parcelOwner" aria-describedby="Ts">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header" id="Us">制图员</span>
+                            <input type="text" class="form-control" id="parcelMapper" aria-describedby="hs">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header" id="ds">检查员</span>
+                            <input type="text" class="form-control" id="parcelInspector" aria-describedby="ds">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header">比例尺</span>
+                            <select class="form-control" id="parcelScale" onchange="app.scaleChange(this.options[this.options.selectedIndex].value)">
+                                <option value="200" selected>1:200</option> <option value="500">1:500</option>
+                                <option value="2000">1:2000</option> <option value="5000">1:5000</option>
+                                <option value="10000">1:10000</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header" id="Q">日期</span>
+                            <input type="text" class="form-control" id="parcelDatetime" aria-describedby="Q">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default geometry-config-panel">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
+                            几何样式配置
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="input-group">
+                            <span class="input-group-addon header">线类型：</span>
+                            <select class="form-control" id="line-kind">
+                                <option value="solid" selected style="border-top-style:solid">实线</option>
+                                <option value="dash" style="border-top-style:dashed">虚线</option>
+                                <option value="dot" style="border-top-style:dotted">点状线</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header">线宽度：</span>
+                            <select class="form-control" id="line-width">
+                                <option value="1" selected>1mm</option> <option value="2">2mm</option>
+                                <option value="3">3mm</option> <option value="4">4mm</option>
+                                <option value="5">5mm</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header">颜色：</span>
+                            <input type="text" class="form-control jscolor" id="line-color" value="ab2567" aria-describedby="ds">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default font-config-panel">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseOne">
+                            字体样式配置
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="input-group spinner" data-trigger="spinner" id="spinner">
+                            <span class="input-group-addon header">大小</span>
+                            <input type="text" class="form-control" id="font-size" value="1" data-max="26" data-min="1" data-step="1">
+                            <div class="input-group-addon">
+                                <a href="javascript:;" class="spin-up" data-spin="up"><i class="fa fa-caret-up"></i></a>
+                                <a href="javascript:;" class="spin-down" data-spin="down">
+                                    <i class="fa fa-caret-down"></i></a>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header">颜色</span>
+                            <input type="text" class="form-control jscolor" id="font-color" value="ab2567" aria-describedby="ds">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon header">粗细</span>
+                            <select class="form-control" id="font-width">
+                                <option value="normal" selected>正常</option> <option value="bolder">加粗</option>
+                                <option value="lighter">细</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="input-group">
-            <span class="input-group-addon header" id="Ts">土地权利人</span>
-            <input type="text" class="form-control" id="pollution-ts" aria-describedby="Ts">
-        </div>
-        <div class="input-group">
-            <span class="input-group-addon header" id="Us">制图员</span>
-            <input type="text" class="form-control" id="pollution-us" aria-describedby="hs">
-        </div>
-        <div class="input-group">
-            <span class="input-group-addon header" id="ds">检查员</span>
-            <input type="text" class="form-control" id="pollution-ds" aria-describedby="ds">
-        </div>
-        <div class="input-group">
-            <span class="input-group-addon header" id="Q">日期</span>
-            <input type="text" class="form-control" id="pollution-Q" aria-describedby="Q">
+        <div class="row" style="margin-top:10px">
+            <div class=" col-md-offset-1 col-md-2">
+                <button type="button" class="btn btn-default" id="btn-parcel-config-ok" style="width:80px">确定</button>
+            </div>
+            <div class=" col-md-offset-1 col-md-2">
+                <button type="button" class="btn btn-default" id="btn-parcel-config-cancle" style="width:80px">取消</button>
+            </div>
+            <div class="col-md-offset-1 col-md-2">
+                <button type="button" class="btn btn-default" id="btn-parcel-config-apply" style="width:80px">应用</button>
+            </div>
         </div>
     </div>
+    <!--宗地检索-->
     <div class="container-fluid" id="search-panel">
         <div class="input-group">
-            <span class="input-group-addon header" id="hs">宗地名称</span>
-            <input type="text" class="form-control" id="pollution-hs" aria-describedby="hs">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" id="parcelQueryKind" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">请选择检索类型<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu parcel-query-menu">
+                    <li>
+                        <a href="#" id="parcelID">宗地编号</a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href="#" id="parcelKind">宗地类型</a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href="#" id="parcelOwn">宗地权利人</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control" id="parcelQueryCondition" aria-describedby="hs">
+              <span class="input-group-btn">
+                <button class="btn btn-default" id="btn-query-parcel" type="button">确定</button>
+            </span>
         </div>
     </div>
+    <!--宗地打印-->
+    <div class="container-fluid" id="parcel-print-panel"></div>
 </div>
+<!---->
+<div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                宗地图打印中，请稍后……
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<div class="modal fade" id="queryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                正在检索宗地，请稍后……
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+
 </body>
 </html>

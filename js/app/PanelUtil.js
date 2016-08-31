@@ -129,7 +129,9 @@ var PanelUtil = (function(){
             'color' : '#ffffff',
             'border' : '1px solid #444',
             'padding' : '6px',
-            'overflow' : 'auto',
+            /*
+             'overflow' : 'hidden',
+             */
             'border-radius' : '10px',
             '-moz-user-select' : 'none',
             '-webkit-user-select' : 'none',
@@ -169,8 +171,8 @@ var PanelUtil = (function(){
         $('.emsgis3d-floatpanel-close-button').html('&#215;');
         $('.emsgis3d-floatpanel-close-button').attr('href', '#close');
         $('.emsgis3d-floatpanel-close-button').click(function(event){
-            console.log("点击关闭DOM:");
-            console.log(event.target.parentElement);
+            /*console.log("点击关闭DOM:");
+             console.log(event.target.parentElement);*/
             event.target.parentElement.style.visibility = "hidden";
         });
         //添加标题Div
@@ -211,8 +213,8 @@ var PanelUtil = (function(){
             var style = window.getComputedStyle(event.target, null);
             event.dataTransfer.setData("text/plain", (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ","
             + (parseInt(style.getPropertyValue("top"), 10) - event.clientY) + "," + event.target.className);
-            console.log("拖动对象：");
-            console.log(event.target);
+            /*console.log("拖动对象：");
+             console.log(event.target);*/
             return true;
         }, false);
 

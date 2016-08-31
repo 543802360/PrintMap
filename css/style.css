@@ -75,6 +75,26 @@ width:280px;
 .esriControlsBR{
 display:none;
 }
+/*scaleBar样式*/
+.esriScalebarLabel.esriScalebarLineLabel.esriScalebarSecondNumber{
+color:yellow;
+font-size:16px;
+top:-5px;
+left:30%;
+}
+.esriScalebarLine.esriScalebarMetricLine{
+border:2px solid yellow;
+border-top-style:none;
+}
+ul.dropdown-menu.parcel-query-menu > li > a{
+color:black;
+}
+#HomeButton{
+position:absolute;
+top:135px;
+left:20px;
+z-index:50;
+}
 /*
 .ui-autocomplete{
 position:absolute;
